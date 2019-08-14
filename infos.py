@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 import re
 
 page_number = 0
-numberOfpages = 20
+numberOfpages = 10
 for i in range(numberOfpages):
     page_number += 1
     page = requests.get(
@@ -18,7 +18,7 @@ for i in range(numberOfpages):
         inner_soup = BeautifulSoup(inner_page.text, 'html.parser')
         price = inner_soup.find('span', attrs={'itemprop': 'price'}).contents[0]
         price = re.sub(',', '', price)
-        if 'توافقی' in price or  'در توضیحات ' in price:
+        if 'توافقی' in price or 'در توضیحات ' in price:
             continue
         brand = inner_soup.find('span', attrs={'itemprop': 'brand'}).contents[0]
         model = inner_soup.find('span', attrs={'itemprop': 'model'}).contents[0]
@@ -34,7 +34,9 @@ for i in range(numberOfpages):
                 temp = re.sub('[\u0600-\u06FF]', '', temp)
                 try:
                     distance = int(temp)
+                    break
                 except:
                     distance = 0
+                    break
 
         print("brand = %s       model = %s        distance = %s       price = %s" % (brand, model, distance, price))
