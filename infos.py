@@ -2,18 +2,24 @@ import requests
 from bs4 import BeautifulSoup
 import re
 
-page_number = 1
-numberOfpages = 1
+page_number = 0
+numberOfpages = 20
 for i in range(numberOfpages):
+    page_number += 1
     page = requests.get(
         'https://bama.ir/car/all-brands/all-models/all-trims?page=' + str(page_number))
     soup = BeautifulSoup(page.text, 'html.parser')
     links = soup.find_all('span', attrs={'class': 'photo'})
+    page_number += 1
     for link in links:
         temp = link.contents[1].attrs
         inner_page_address = temp['href']
         inner_page = requests.get(inner_page_address)
         inner_soup = BeautifulSoup(inner_page.text, 'html.parser')
+        price = inner_soup.find('span', attrs={'itemprop': 'price'}).contents[0]
+        price = re.sub(',', '', price)
+        if 'توافقی' in price or  'در توضیحات ' in price:
+            continue
         brand = inner_soup.find('span', attrs={'itemprop': 'brand'}).contents[0]
         model = inner_soup.find('span', attrs={'itemprop': 'model'}).contents[0]
         price = inner_soup.find('span', attrs={'itemprop': 'price'}).contents[0]
