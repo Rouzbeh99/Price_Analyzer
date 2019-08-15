@@ -1,9 +1,16 @@
 import requests
+import mysql.connector
 from bs4 import BeautifulSoup
 import re
 
+connection = mysql.connector.connect(user='Rouzbeh', password='2650236000_',
+                                     host='127.0.0.1',
+                                     database='test')
+curser = connection.cursor()
+curser.execute('CREATE TABLE IF NOT EXISTS Cars(Brand varchar(30),Model varchar(30),Price integer ,Distance integer )')
+
 page_number = 0
-numberOfpages = 10
+numberOfpages = 2
 for i in range(numberOfpages):
     page_number += 1
     page = requests.get(
@@ -38,5 +45,9 @@ for i in range(numberOfpages):
                 except:
                     distance = 0
                     break
+        query = 'INSERT INTO CARS VALUES(brand,model,price,distance) WHERE NOT EXITS(SELECT * FROM CARS WHERE (Brand = brand AND Model = model AND Price = price AND Distance = distance));'
+        curser.execute(query)
+        print("car with brand = %s       model = %s        distance = %s       price = %s added to database" % (
+            brand, model, distance, price))
 
-        print("brand = %s       model = %s        distance = %s       price = %s" % (brand, model, distance, price))
+connection.commit()
