@@ -46,18 +46,34 @@ for i in range(numberOfpages):
                 except:
                     distance = 0
                     break
-        query = 'INSERT INTO CARS VALUE('
-        query += '\''+brand+'\''
+
+        # query = 'INSERT IGNORE INTO CARS VALUE('
+        # query += '\''+brand+'\''
+        # query += ','
+        # query += '\''+model+'\''
+        # query += ','
+        # query += str(price)
+        # query += ','
+        # query += str(distance)
+        # query += ');'
+        query = 'INSERT  INTO CARS (Brand,Model,Price,Distance) SELECT * FROM ( SELECT '
+        query += '\'' + brand + '\''
         query += ','
-        query += '\''+model+'\''
+        query += '\'' + model + '\''
         query += ','
         query += str(price)
         query += ','
         query += str(distance)
+        query += ') AS temp WHERE NOT EXISTS ( SELECT Brand,Model,Price,Distance FROM Cars WHERE Brand ='
+        query += '\'' + brand + '\' AND Model='
+        query += '\'' + model + '\' AND Price='
+        query += str(price) + ' AND Distance='
+        query += str(distance)
         query += ');'
 
-        curser.execute(query)
         print("car with brand = %s       model = %s        distance = %d       price = %d added to database" % (
             brand, model, distance, price))
+
+        curser.execute(query)
 
 connection.commit()
