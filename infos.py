@@ -12,8 +12,9 @@ curser.execute(
 
 number_Of_Cars = 0
 page_number = 0
-numberOfpages = 1000
+numberOfpages = 3000
 for i in range(numberOfpages):
+
     page_number += 1
     page = requests.get(
         'https://bama.ir/car/all-brands/all-models/all-trims?page=' + str(page_number))
@@ -35,7 +36,7 @@ for i in range(numberOfpages):
             continue
         brand = inner_soup.find('span', attrs={'itemprop': 'brand'}).contents[0]
         model = inner_soup.find('span', attrs={'itemprop': 'model'}).contents[0]
-        if release_Date > 2000:
+        if release_Date > 1500:
             release_Date -= 621
         distance = 0
         all_infoes = inner_soup.findAll('span')
